@@ -3,6 +3,7 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import os
+from CH6 import stock_gpt
 
 app = Flask(__name__)
 
@@ -31,7 +32,7 @@ def webhook():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_message = event.message.text  # 使用者發送的訊息
-    reply_message = f"你說的是：{user_message}"
+    reply_message = stock_gpt(user_message)
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=reply_message)
