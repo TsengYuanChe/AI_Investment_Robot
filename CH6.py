@@ -7,6 +7,8 @@ import requests
 from bs4 import BeautifulSoup
 import os
 from dotenv import load_dotenv
+import openai
+from replit import db
 
 load_dotenv()  # 讀取 .env 檔案
 api_key = os.environ.get("OPENAI_API_KEY")
@@ -118,28 +120,26 @@ name_df = stock_name()
 def get_stock_name(stock_id, name_df):
     return name_df.set_index('股號').loc[stock_id, '股名']
 
-# 建立 GPT 3.5-16k 模型
 def get_reply(messages):
-    try:
-        response = client.chat.completions.create(
-            model = "gpt-3.5-turbo",
-            messages = messages
-        )
-        reply = response.choices[0].message.content
-    except OpenAIError as err:
-        reply = f"發生 {err.type} 錯誤\n{err.message}"
-    return reply
+  try:
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages)
+    reply = response["choices"][0]["message"]["content"]
+  except openai.OpenAIError as err:
+    reply = f"發生 {err.error.type} 錯誤\n{err.error.message}"
+  return reply
 
 # 建立訊息指令(Prompt)
-def generate_content_msg(stock_id, name_df):
+def generate_content_msg(stock_id):
 
-    stock_name = get_stock_name(
-        stock_id, name_df) if stock_id != "大盤" else stock_id
+    stock_name = db[stock_id]["stock_name"] if stock_id != "大盤" else stock_id
 
     price_data = stock_price(stock_id)
     news_data = stock_news(stock_name)
 
-    content_msg = f'請依據以下資料來進行分析並給出一份完整的分析報告:\n'
+    content_msg = '你現在是一位專業的證券分析師, \
+      你會依據以下資料來進行分析並給出一份完整的分析報告:\n'
 
     content_msg += f'近期價格資訊:\n {price_data}\n'
 
@@ -154,12 +154,12 @@ def generate_content_msg(stock_id, name_df):
     return content_msg
 
 # StockGPT
-def stock_gpt(stock_id, name_df=name_df):
-    content_msg = generate_content_msg(stock_id, name_df)
+def stock_gpt(stock_id):
+    content_msg = generate_content_msg(stock_id)
 
     msg = [{
         "role": "system",
-        "content": f"你現在是一位專業的證券分析師, 你會統整近期的股價\
+        "content": "你現在是一位專業的證券分析師, 你會統整近期的股價\
       、基本面、新聞資訊等方面並進行分析, 然後生成一份專業的趨勢分析報告"
     }, {
         "role": "user",
@@ -169,6 +169,3 @@ def stock_gpt(stock_id, name_df=name_df):
     reply_data = get_reply(msg)
 
     return reply_data
-
-reply = stock_gpt(stock_id="大盤")
-print(reply)

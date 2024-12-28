@@ -3,7 +3,7 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import os
-from CH6 import stock_gpt
+from CH6 import stock_gpt, get_reply
 
 app = Flask(__name__)
 
@@ -31,12 +31,22 @@ def webhook():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    user_message = event.message.text  # 使用者發送的訊息
-    reply_message = stock_gpt(user_message)
+    user_message = event.message.text
+
+    # 檢測是否為4位數的股票代碼或「大盤」訊息
+    if (len(user_message) == 4 and user_message.isdigit()) or user_message == '大盤':
+        reply_text = stock_gpt(user_message)
+    # 一般訊息
+    else:
+        msg = [  {"role": "system",
+                  "content":"reply in 繁體中文"
+              }, {"role": "user",
+                  "content":user_message}]
+        reply_text = get_reply(msg)
+      
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=reply_message)
-    )
+        TextSendMessage(text=reply_text))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
