@@ -5,7 +5,7 @@ from stock_value import stock_fundamental
 import pandas as pd
 
 stock_list = pd.read_csv('stock_list.csv')
-stock_list.set_index('股號', inplace=True)
+stock_list.set_index('代號', inplace=True)
 data = stock_list.to_dict(orient='index')
 
 def get_reply(messages):
