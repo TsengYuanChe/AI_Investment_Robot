@@ -3,6 +3,13 @@ from stock_price import stock_price
 from stock_news import stock_news
 from stock_value import stock_fundamental
 import pandas as pd
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = api_key
 
 stock_list = pd.read_csv('stock_list.csv')
 stock_list.set_index('代號', inplace=True)
