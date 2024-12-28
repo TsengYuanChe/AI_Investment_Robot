@@ -38,15 +38,16 @@ def handle_message(event):
         reply_text = stock_gpt(user_message)
     # 一般訊息
     else:
-        msg = [  {"role": "system",
-                  "content":"reply in 繁體中文"
-              }, {"role": "user",
-                  "content":user_message}]
+        msg=[
+            {"role": "system","content": "reply in 繁體中文"},
+            {"role": "user","content": user_message}
+        ]
         reply_text = get_reply(msg)
       
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=reply_text))
+        TextSendMessage(text=reply_text)
+    )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)

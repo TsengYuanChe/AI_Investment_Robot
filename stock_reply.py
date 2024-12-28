@@ -15,8 +15,8 @@ def get_reply(messages):
             messages = messages
         )
         reply = response["choices"][0]["message"]["content"]
-    except openai.OpenAIError as erro:
-        reply = f"發生 {erro.error.type} 錯誤\n {erro.error.message}"
+    except openai.OpenAIError as e:
+        reply = f"發生錯誤: {str(e)}"
     return reply
 
 def generate_content_msg(stock_id):
