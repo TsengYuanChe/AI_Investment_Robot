@@ -6,8 +6,10 @@ import datetime as dt # 時間套件
 import requests
 from bs4 import BeautifulSoup
 import os
+from dotenv import load_dotenv
 
-api_key = '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'
+load_dotenv()  # 讀取 .env 檔案
+api_key = os.environ.get("OPENAI_API_KEY")
 client = OpenAI(api_key = api_key)
 
 def stock_price(stock_id="大盤", days = 10):
