@@ -3,7 +3,7 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import os
-from CH6 import stock_gpt, get_reply
+from stock_reply import stock_gpt, get_reply
 
 app = Flask(__name__)
 
