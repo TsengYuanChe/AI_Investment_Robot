@@ -10,7 +10,7 @@ data = stock_list.to_dict(orient='index')
 
 def get_reply(messages):
     try:
-        response = openai.ChatCompletion.creat(
+        response = openai.ChatCompletion.create(
             model = "gpt-3.5-turbo",
             messages = messages
         )
