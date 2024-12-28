@@ -5,7 +5,7 @@ def stock_price(stock_id="大盤", days = 10):
     if stock_id == "大盤":
         stock_id="^TWII"
     else:
-        stock_id += ".TW"
+        stock_id = str(stock_id) + ".TW"
 
     end = dt.date.today() # 資料結束時間
     start = end - dt.timedelta(days=days) # 資料開始時間

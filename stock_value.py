@@ -5,7 +5,7 @@ def stock_fundamental(stock_id= "大盤"):
     if stock_id == "大盤":
         return None
 
-    stock_id += ".TW"
+    stock_id = str(stock_id) + ".TW"
     stock = yf.Ticker(stock_id)
 
     # 營收成長率

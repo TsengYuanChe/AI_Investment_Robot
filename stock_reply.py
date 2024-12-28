@@ -27,15 +27,20 @@ def get_reply(messages):
     return reply
 
 def generate_content_msg(stock_id):
+    try:
+        stock_id = int(stock_id)  # 確保轉為數字類型
+    except ValueError:
+        return f"無效的股票代號：{stock_id}"
+
     if stock_id == "大盤":
         stock_name = "大盤"
     elif stock_id in data:
-        stock_name = data[stock_id]["股名"]
+        stock_name = data[stock_id]["股票名稱"]
     else:
         return f"找不到股號 {stock_id} 的資訊。"
     
     price_data = stock_price(stock_id)
-    news_data = stock_news(stock_name)
+    news_data = stock_news(stock_name)[:3]
     
     content_msg = '你現在是一位專業的證券分析師, \
         你會依據以下資料來進行分析並給出一份完整的分析報告:\n'
@@ -63,7 +68,23 @@ def stock_gpt(stock_id):
         "role": "user",
         "content": content_msg
     }]
+    
+    total_tokens = sum(len(m["content"]) for m in msg)
+    if total_tokens > 16000:  # 給些許餘量
+        return "輸入資料過多，請減少查詢範圍或數據量。"
 
     reply_data = get_reply(msg)
 
     return reply_data
+
+stock_id = "2330"
+print(f"Testing stock_id: {stock_id}")
+
+content_msg = generate_content_msg(stock_id)
+print(f"Content message: {content_msg}")
+
+if "找不到" not in content_msg:
+    reply = stock_gpt(stock_id)
+    print(f"Final reply: {reply}")
+else:
+    print(content_msg)
