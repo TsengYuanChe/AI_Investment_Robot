@@ -1,7 +1,7 @@
 import yfinance as yf
 import datetime as dt
 
-def stock_price(stock_id="大盤", days = 10):
+def stock_price(stock_id="大盤", days = 5):
     if stock_id == "大盤":
         stock_id="^TWII"
     else:
